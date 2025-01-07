@@ -1,0 +1,22 @@
+#This script is used in a feature layer for visualization under the symbology attribute expression. It takes 3 fields that have domains that being imported with glitches such as spaces or underscores from Survey123 or by editing errors and corrects them to #keep the domain values true so the sumbology does not get classified as other, the 3 fields are named: lane closure type, road closure type, and other type. If the script finds a unique key word it classifies all with that keyword under the domain name, then #symbology is set on test records with a permit number 999 that can be filtered out, this holds the symbology settings like color and line weight even when a closure type is not active in the map. 
+
+
+IIF (Find("Weekend", $feature.LANECLOSURE_TYPE)>=0, "Weekend Lane Closure",
+IIF (Find("Daytime", $feature.LANECLOSURE_TYPE)>=0, "Daytime Lane Closure",
+IIF (Find("Emergency", $feature.LANECLOSURE_TYPE)>=0, "Emergency Lane Closure",
+IIF (Find("24", $feature.LANECLOSURE_TYPE)>=0, "24 Hour Lane Closure",
+IIf (Find("Nighttime", $feature.LANECLOSURE_TYPE)>=0, "Nighttime Lane Closure",
+IIF (Find("Daytime", $feature.ROADCLOSURE_TYPE)>=0, "Daytime Road Closure",
+IIF (Find("Water", $feature.ROADCLOSURE_TYPE)>=0, "Road under Water",
+IIF (Find("Weekend", $feature.ROADCLOSURE_TYPE)>=0, "Weekend Road Closure",
+IIF (Find("Emergency", $feature.ROADCLOSURE_TYPE)>=0, "Emergency Road Closure",
+IIF (Find("24", $feature.ROADCLOSURE_TYPE)>=0, "24 Hour Road Closure",
+IIf (Find("Nighttime", $feature.ROADCLOSURE_TYPE)>=0, "Nighttime Road Closure",
+IIf (Find("Shoulder", $feature.OTHER_TYPE)>=0, "Work On Shoulder",
+IIf (Find("Emergency_Maintenance", $feature.OTHER_TYPE)>=0, "Emergency Maintenance of Traffic",
+IIf (Find("Maintenance", $feature.OTHER_TYPE)>-1, "Maintenance of Traffic",
+IIf (Find("Special_Event", $feature.OTHER_TYPE)>=0, "Special Event",
+IIf (Find("Block_Party", $feature.OTHER_TYPE)>=0, "Block Party",
+IIf (Find("Emergency", $feature.OTHER_TYPE)>=0, "Emergency Railroad",
+IIf (Find("Railroad", $feature.OTHER_TYPE)>-1, "Railroad",
+"Other"))))))))))))))))))
