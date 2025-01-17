@@ -1,0 +1,53 @@
+//Label other if other field filled out (assumes domain list with choice ;other' then 2nd field where they write in the other without a domain)
+var MAINLIST=$feature.CONTRACTOR
+var WRITEIN=$feature.contractor_other
+
+if (MAINLIST=="New_Other_Organization")
+return WRITEIN
+else {
+  return MAINLIST
+}
+
+
+#find null or blank or space bar data and give it a name for labels and pop-up
+var catName = $feature.CATEGORY;
+if (Find(' ', catName) > -1) {
+return 'Hydrology'
+}
+else if(IsEmpty(catName)) {
+return 'Hydro'
+}
+else  {
+return Proper(catName)
+};
+
+
+#TTC permits field map symbology expression to make 3 categories for 3 colors, shows a combination of 2 fields and labesl the domains to tell the permit closure type and the inspection status to base symbology on all combinations of these 2 fields as a priority based system.
+var closureType = $feature.CLOSURE_TYPE;
+var X;
+
+if (Find("Road", closureType) >= 0) {
+    X = "Road_Closure";
+} else if (Find("Lane", closureType) >= 0) {
+    X = "Lane_Closure";
+} else if (Find("Other", closureType) >= 0) {
+    X = "Other";
+} else {
+    X = "Unknown Closure Type";
+}
+
+var inspectTTC = $feature.INSPECT_TTC;
+var Y;
+
+if (Find("Yes", inspectTTC) >= 0) {
+    Y = "Yes, First Inspection Needed";
+} else if (Find("Closed", inspectTTC) >= 0) {
+    Y = "No, Closed -FORGOT TO CLOSE PERMIT STATUS";
+} else if (Find("In Progress", inspectTTC) >= 0) {
+    Y = "In Progress, Needs Follow-Up Inspection";
+} else if (Find("No Activity", inspectTTC) >= 0) {
+    Y = "On Hold, Project Inactive can inspect later";
+} else {
+    Y = "Perform Inspection Blank";
+}
+Return X + " - " + Y;
