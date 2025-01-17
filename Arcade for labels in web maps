@@ -1,0 +1,50 @@
+//Used in water meters adds a dot symbol into the actual point symbol once the location has been verified in the Field Maps
+if($feature.Loc_Verified!="Yes") {return "●"}
+else {return ""}
+
+//Use this attribute expression in the pop-up text 
+if ($feature.Loc_Verified == "Yes") {
+  return "By: " + $feature.Verified_By + ", " + $feature.Date_Loc_Verified
+}
+else {
+  return "Location not verified"
+}
+
+
+//#show percentages
+var WalkPerc= [$feature.PercentTractWalkable10Min] +' %'
+Return WalkPerc
+
+#wimauma Census Tract custom label percentage and round to 1 place
+Round($feature["GrowthRate"],1) +" %"
+
+#Population Density attribute round to 1 place
+Round(($feature["SUM_TotalPOP"]/$feature["SUM_Area_SQUAREMILES"]),0)
+
+ ///Label Growth Rate
+var labels = $feature["POPGRW0010"];
+var Show=Round(labels,1)
+Return Concatenate(Show,TextFormatting.NewLine) 
+
+
+//Webmap or ArcPro label 2 lines with text before field
+var FOL = 'Folio '+$feature.FOLIO;
+var LU = $feature.LU_GRP;
+var LABEL = [FOL, LU];
+return Concatenate(LABEL, TextFormatting.NewLine)
+
+#Custom Label webmap
+//Label Area and Density
+var labels = [$feature.JURIS, $feature["SUM_TotalPOP"]];
+return Concatenate(labels, TextFormatting.NewLine)
+
+
+#Change to Proper Case can use either 'everyword' or 'firstword'
+Proper(DomainName($feature,"LABEL"),'everyword')
+#For AGOL roads layer
+Proper(DomainName($feature,"STREET"),'everyword')
+
+//Brings in 2010 Total Pop from pop denisty tracts into the 2020 density tracts layer as an attribute for displayvar T= $feature.POP100
+var R= FeatureSetById($map, /* Unincorporated and Incorporated Cities 2010 */ "PopulationChangeData_4011")
+var POPUP= First(R,)
+Return POPUP.SUM_TotalPOP
