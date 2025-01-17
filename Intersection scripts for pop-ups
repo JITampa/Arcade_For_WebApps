@@ -1,0 +1,160 @@
+// Use the following attribute expressions in a pop-up in AGO map viewer to show the intersecting feature, these examples are used in an Agricultural parcels map
+//The parcel is within this boundary of the Urban SA field name for the USA is 'USADESIG'
+var USA= Intersects(FeatureSetByName($map,"Urban Service Areas -Live"),$feature)
+for (var f in USA){
+return f.USADESIG
+}
+
+//polygon intersecting point to find historic waste sites
+var HWDS=FeatureSetByName($map,"Historic Waste Disposal Sites")
+var HWDSperParcel=Count(Intersects(HWDS,$feature))
+var SWF=FeatureSetByName($map,"Solid Waste Facilities")
+var SWFperParcel=Count(Intersects(SWF,$feature))
+Var PopUpCountPoints="Historic Waste Disposal Sites In Parcel is "
++HWDSperParcel
++TextFormatting.NewLine
++"Solid Waste Facilities in Parcel is "
++SWFperParcel
+return PopUpCountPoints
+
+// The parcel is within this polygon boundary for the water feature
+var HYD= Intersects(FeatureSetByName($map,"Hydrology - Live"),$feature)
+for (var f in HYD){
+return "Hydro in area: "+Count(f.CATEGORY)}
+
+// The parcel is within this boundary
+//SoilLinketoWebmapformoredetailshttps://websoilsurvey.nrcs.usda.gov/app/WebSoilSurvey.aspx
+var SOIL= Intersects(FeatureSetByName($map,"Soils - Live"),$feature)
+for (var f in SOIL){
+return Proper(f.MUNAME)
+}
+
+// The parcel is within this polygon boundary for the NFHL flood zone
+var NFHL= Intersects(FeatureSetByName($map,"National Flood Hazard Layer"),$feature)
+for (var f in NFHL){
+return f.FLD_ZONE
+}
+
+
+// The parcel is within this polygon boundary
+var EZ= Intersects(FeatureSetByName($map,"Evacuation Zones- Based on Storm Surge Inundation- Live"),$feature)
+for (var f in EZ){
+return f.ZONE
+}
+
+// The parcel is within this polygon boundary
+var ELAPP= Intersects(FeatureSetByName($map,"Environmental Lands Acquisition and Protection Program (ELAPP)- Live"),$feature)
+for (var f in ELAPP){
+return f.SITE_NAME
+}
+
+
+// The parcel is within this polygon boundary
+var FLUH= Intersects(FeatureSetByName($map,"Future Land Use - Live"),$feature)
+for (var f in FLUH){
+return f.FLUE
+}
+
+// The parcel is within this polygon boundary
+var ZO= Intersects(FeatureSetByName($map,"Zoning"),$feature)
+for (var f in ZO){
+return f.NZONE_DESC
+}
+
+/ The parcel is within this polygon boundary
+var HYD= Intersects(FeatureSetByName($map,"Agricultural Land Use Land Cover SWFWMD"),$feature)
+for (var f in HYD){
+return Proper(f.FLUCSDESC)
+}
+
+// The parcel is within this polygon boundary
+var PSA= Intersects(FeatureSetByName($map,"Peak Sensitive Areas- Final Vol Flooding Sensitive"),$feature)
+for (var f in PSA){
+return "Within a PSA of "+f.SUBWATERSHED+" Acres in this Basin:"+f.BASIN_ACRES
+}
+
+// The parcel intersectsis near these line features
+var RAIL=Intersects(FeatureSetById($map, /* Railroads */ "183f5e5aacb-layer-5"),Buffer($feature,1000,'feet'))
+Return "Railroads Within 1,000 Feet: "+Count(Rail)
+
+//Find Wetlands
+//Source https://fwspublicservices.wim.usgs.gov/wetlandsmapservice/rest/services/Wetlands/MapServer
+var WET=Intersects(FeatureSetByName($map,"NWI Wetlands"),$feature)
+for (var f in WET){
+    return f.WETLAND_TYPE
+}
+
+var RDS=Intersects(FeatureSetById($map, /* Roads */ "183f5e5edd0-layer-6"),Buffer($feature,500,'feet'))
+//var RDS=Intersects(FeatureSetByName($map,"Roads"),Buffer($feature,1000,'feet'))
+//var LINESNEAR= "Railroads within 1,000 Feet "+RAIL+"Owned By "
+Return "Roads Within 500 Feet: "+Count(RDS)
+// Write a script to return a value to show in the pop-up.
+
+
+//Count Sinkholes
+//https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/FGS_SUBSIDENCE/MapServer/0
+var SINK=FeatureSetByName($map,"Sinkholes")
+var SINKHOLE=Intersects(SINK,$feature)
+Return "Sinkholes Within 1,000 Feet: "+Count(SINKHOLE)
+
+/// The parcel is within this boundary
+var BF= Intersects(FeatureSetByName($map,"Brown Fields"),$feature)
+for (var f in BF){
+return f.AREA_NAME
+}
+
+
+// Find All Flood Zones that intersect the layer and count and list them
+
+
+var intersectLayer = Intersects(FeatureSetByName($map,"Flood Zones - Live"), $feature);
+var cnt = Count(intersectLayer);
+var result =" Flood Zones found:"
+
+// first check if you have any intersecting features
+if (cnt > 0) {
+    for (var f in intersectLayer){
+        result += TextFormatting.NewLine + " Flood Zones-" + f.FLD_ZONE;
+    }
+} else {
+    result = "no Flood Zones found..."
+}
+
+return cnt + result;
+
+
+//Pop-up text:
+Folio: {FOLIO}
+Acres: {ACREAGE}
+Owner: {OWNER}
+Owner's Address: {ADDR_1}{ADDR_2}
+{CITY}, {STATE} {ZIP}
+Site Address: {SITE_ADDR} {SITE_CITY} {SITE_ZIP} 
+
+Notes: 
+ 
+DOR Code: {DOR_CODE}
+Land Use Group: {LU_GRP}
+ 
+SWFMD LULC: {expression/expr11}
+ELU Ag Only: {expression/expr8}
+FLU HC: {expression/expr9}
+Zoning: {expression/expr10}
+Parcel in USA: {expression/expr1} 
+
+Hydrology: {expression/expr4}
+Flood Zone: {expression/expr18}
+Evacuation Zone/ Storm Surge: {expression/expr6}
+
+{expression/expr2} 
+{expression/expr16} 
+Brown Fields: {expression/expr17}
+ 
+ELAPP: {expression/expr7} 
+Peak Sensitive Area: {expression/expr12}
+NWI Wetlands: {expression/expr15}
+NRCS Soil Type(s): {expression/expr3}
+NRCS Web Soil Survey Link 
+
+{expression/expr13}
+{expression/expr14}
