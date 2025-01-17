@@ -1,0 +1,51 @@
+// Get the related records using the relationship name
+var relatedRecords = FeatureSetByRelationshipName($feature, "InspectTable_V4");
+
+
+
+// Check if related records exist
+if (Count(relatedRecords) > 0) {
+    // Retrieve the inspection dates
+    var inspectionDates = [];
+    for (var record in relatedRecords) {
+        Push(inspectionDates, Text(record["AGUP_Inspection_Date"], 'MMMM d, yyyy')); // Format date if needed
+    }
+    
+    // Combine the dates into a single string
+    return "Inspection Dates: " + Concatenate(inspectionDates, ", ");
+} else {
+    return "No inspection records available.";
+}
+
+
+
+///Permit related table inspection records
+//As seen in pop-up text
+AGUP Inspection Results: {expression/expr7}  
+
+AGUP Inspector Name: {expression/expr6} 
+
+AGUP Inspection Date: {expression/expr8}
+
+//Exp 6
+ var X= First(OrderBy(FeatureSetByRelationshipName($feature, "InspectTable_V4"), "OBJECTID DESC"))
+return X.AGUP_Inspector
+
+//Exp 7
+var X= First(OrderBy(FeatureSetByRelationshipName($feature, "InspectTable_V4"), "OBJECTID DESC"))
+return X.AGUP_Approval
+
+//Exp 8
+
+var X = First(OrderBy(FeatureSetByRelationshipName($feature, "InspectTable_V4"), "OBJECTID DESC"))
+var inspectionDate = X.AGUP_Inspection_Date
+ 
+// Extract year, month, and day components
+var year = Year(inspectionDate)
+var month = Text(Month(inspectionDate), '00')  // Ensure two-digit month
+var day = Text(Day(inspectionDate), '00')     // Ensure two-digit day
+ 
+// Combine into desired format
+var formattedDate = year + "/" + month + "/" + day
+return formattedDate
+ 
