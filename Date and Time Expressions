@@ -1,0 +1,23 @@
+//Find Traffic permits that are expired when there is both an end date and extendsion (end) date field to consider
+// Get the current date
+var currentDate = Now();
+
+// Field for the 'end date' and 'extension date'
+var endDate = $feature.DATE_OPENED;
+var extensionDate = $feature.EXTEND_DATE;
+
+// Check if 'end date' is at least 7 days old
+if (!IsEmpty(endDate)) {
+    var endDateDiff = DateDiff(currentDate, endDate, 'days');
+    var extensionDateDiff = 0;
+
+    // Calculate difference for 'extension date' only if it is not empty
+    if (!IsEmpty(extensionDate)) {
+        extensionDateDiff = DateDiff(currentDate, extensionDate, 'days');
+    }
+
+    // 'end date' must be 7 days old, and 'extension date' must be null, empty, or 7 days old
+    return endDateDiff >= 7 && (IsEmpty(extensionDate) || extensionDateDiff >= 7);
+} else {
+    return false; // Return false if 'end date' is empty
+}
